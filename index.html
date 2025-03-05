@@ -1,0 +1,643 @@
+
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>luigi mottola</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        
+        @font-face {
+            font-family: 'NeueHaasDisplayLight';
+            src: url('https://raw.githubusercontent.com/Tomalt-ops/Portfolio/main/neue-haas-grotesk-display-pro-cdnfonts/NeueHaasDisplayLight.ttf') format('truetype');
+        }
+
+        body {
+            background: #ffffff;
+            color: #000000;
+            line-height: 1.6;
+        }
+
+        /* Header */
+        .header {
+            display: grid;
+            grid-template-columns: 40% 50% 10%;
+            width: 100%;
+            padding: 2rem 2rem 0rem 2rem;
+            position: fixed;
+            top: 0;
+            background: white;
+            z-index: 1000;
+        }
+
+        .header div {
+            display: flex;
+            align-items: center;
+            font-weight: 200;
+            font-size: 1.2rem;
+        }
+
+        /* Allineamento specifico per le colonne */
+        .header .name {
+            text-align: left;
+            justify-content: flex-start;
+            padding-left: 0rem;
+        }
+
+        .header .about {
+            justify-content: left;
+            padding-left: 0rem;
+            cursor: pointer;
+        }
+        
+        .header .social-links {
+            text-align: right;
+            gap: 0.7rem;
+            justify-content: flex-end;
+            padding-right: 0rem;
+        }
+
+        /* Tabella progetti */
+
+        .projects-table {
+            table-layout: fixed;
+        }
+        
+        .projects-table th:nth-child(1),
+        .projects-table td:nth-child(1) {
+            width: 40%; /* da commentare se si vuole dividere in 3 parti uguali */
+            text-align: left;
+            padding-left: 2rem;
+        }
+        
+        .projects-table th:nth-child(2),
+        .projects-table td:nth-child(2) {
+            width: 40%; /* da commentare se si vuole dividere in 3 parti uguali */
+            text-align: left;
+            padding-left: 0.6rem;
+        }
+        .projects-table th:nth-child(3),
+        .projects-table td:nth-child(3) {
+            width: 20%; /* da commentare se si vuole dividere in 3 parti uguali */
+            text-align: right;
+            padding-right: 2rem;
+        }
+        
+        * {
+            color: #000000;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'NeueHaasDisplayLight', sans-serif;
+            font-weight: 400;
+            font-style: normal;
+        }
+        
+        .projects-table {
+            margin-top: 6rem; /* distanza tra header e titoli PROJECT TYPE */
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .projects-table th, 
+        .projects-table td,
+        .projects-table div {
+            padding: 0.75rem 0rem;
+            text-align: left;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 1.1rem;
+            position: relative;
+        }
+
+        .project-row:hover {
+            background: #f8f8f8;
+        }
+
+        .project-cell {
+            position: relative; /* Crea un contesto per il posizionamento assoluto */
+        }
+
+        .project-cell:hover .hover-image {
+            display: block;
+            animation: image-appear 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        /* hover image */
+        .hover-image {
+            display: none;
+            position: absolute; 
+            max-width: 300px;
+            max-height: auto;
+            z-index: 2000;
+            pointer-events: none;
+            object-fit: contain;
+            top: 55%;
+            left: 95%;
+            transform: translate(-350%, -50%);
+        }
+        
+        /* Modal dettagli */
+        .project-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50%;
+            max-height: 80vh;
+            background: white;
+            z-index: 2000;
+            padding: 0rem 0rem 2rem 0rem;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-header {
+            position: sticky; /* L'header rimane fisso rispetto al contenitore */
+            top: 0;
+            background: white; /* Assicura che l'header non sia trasparente */
+            z-index: 10;
+            padding: 2rem 2rem 0rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-body {
+            overflow-y: auto;
+            max-height: calc(80vh - 120px);
+            padding: 0rem 2rem 2rem 2rem;
+            flex-grow: 1; /* Occupa lo spazio rimanente e diventa scrollabile se il contenuto supera lo spazio */
+        }
+
+        /* About Section */
+        #about-content {
+            display: none;
+            padding: 6rem 2rem;
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: justify;
+            hyphens: auto; /* Divisione automatica delle parole */
+            max-width: 800px; /* Larghezza ottimale per la leggibilità */
+            line-height: 1.5; /* Interlinea */
+        }
+
+        #about-content p {
+            margin-bottom: 1.5rem;
+        }
+        
+        .project-modal button {
+            color: #000000 !important;
+            background: none !important;
+            border: 0px !important;
+            border-radius: 0%;
+            width: 30px;
+            height: 30px;
+            font-size: 1.2rem !important;
+            line-height: 1;
+            /* position: fixed; */
+            position: sticky; /* L'header rimane fisso rispetto al contenitore */
+            top: 35px;
+            right: 30px;
+            transition: all 0.3s;
+            z-index: 2001;
+        }
+        
+        .project-modal button:hover {
+            background: #000000 !important;
+            color: #ffffff !important;
+        }
+        
+        /* scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #ffffff;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #000000;
+            border-radius: 4px;
+        }
+        
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="name">luigi mottola</div>
+        <div class="about" onclick="toggleAbout()">art director & graphic Designer</div>
+        <div class="social-links">
+            <a href="https://www.instagram.com/tomalto/"><i class="fab fa-instagram"></i></a>
+            <a href="https://www.linkedin.com/in/luigi-mottola-8664322b0/"><i class="fab fa-linkedin-in"></i></a>
+        </div>
+    </div>
+
+    <!-- Tabella progetti -->
+    <table class="projects-table">
+        <thead>
+            <tr>
+                <th>PROJECT</th>
+                <th>TYPE</th>
+                <th>&nbsp</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="project-row" onclick="openModal('Dettagli')">
+                <td> 
+                    <div class="project-cell">
+                        I dettagli amano nascondersi
+                        <img src="aff_1RGB.jpg" class="hover-image" alt="Anteprima progetto">
+                    </div>
+                </td>
+                <td>advertising</td>
+                <td>&nbsp</td>
+            </tr>
+            <tr class="project-row" onclick="openModal('Doritos')">
+                <td>
+                    <div class="project-cell">
+                        DoritosXCholula - Don’t waste a moment
+                        <img src="doritos.jpg" class="hover-image" alt="Anteprima progetto">
+                    </div>
+                </td>
+                <td>advertising </td>
+                <td>&nbsp</td>
+            </tr>
+            <tr class="project-row" onclick="openModal('ADWEEK')">
+                <td>
+                    <div class="project-cell">
+                        ADWEEK - This is not AI
+                        <img src="American Gothic_pres.gif" class="hover-image" alt="Anteprima progetto">
+                    </div>
+                </td>
+                <td>advertising</td>
+                <td>&nbsp</td>
+            </tr>
+            <tr class="project-row" onclick="openModal('MELIES')">
+                <td>
+                    <div class="project-cell">
+                        Animated aphorism x Georges Méliès
+                        <img src="Melies.gif" class="hover-image" alt="Anteprima progetto">
+                    </div>
+                </td>
+                <td>motion graphic</td>
+                <td>&nbsp</td>
+            </tr>
+            <tr class="project-row" onclick="openModal('AIDO')">
+                <td>
+                    <div class="project-cell">
+                        AIDO - Un dono consapevole
+                        <img src="aido.jpg" class="hover-image" alt="Anteprima progetto">
+                    </div>
+                </td>
+                <td>advertising</td>
+                <td>&nbsp</td>
+            </tr>
+            <tr class="project-row" onclick="openModal('ZOOM')">
+                <td>
+                    <div class="project-cell">
+                        ZOOM+/-
+                        <img src="Zoom.gif" class="hover-image" alt="Anteprima progetto">
+                    </div>
+                </td>
+                <td>short film</td>
+                <td>&nbsp</td>
+            </tr>
+            <tr class="project-row" onclick="openModal('Xperiments')">
+                <td>
+                    <div class="project-cell">
+                        Graphic experiments
+                        <img src="riassunto.gif" class="hover-image" alt="Anteprima progetto">
+                    </div>
+                </td>
+                <td>graphic design</td>
+                <td>&nbsp</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Modal Dettagli -->
+    <div id="project-modal" class="project-modal" style="display: none;">
+        <div class="modal-header">
+            <h2 id="modal-title"></h2>
+            <button class="close-btn" onclick="closeModal()">✕</button>
+        </div>
+        <div id="modal-content" class="modal-body"></div>
+    </div>
+
+    <!-- About Section -->
+    <div id="about-modal" class="project-modal" style="display: none;">
+        <div class="modal-header">
+            <h2>About</h2>
+            <button onclick="toggleAbout()" class="close-btn">✕</button>
+        </div>
+        <div id="modal-content" class="modal-body">
+            <p>Mario Rossi, graphic designer di fama internazionale, non ha dubbi: lui è il migliore al mondo. Con un portfolio che spazia da campagne pubblicitarie iconiche a loghi diventati simboli culturali, Mario si vanta di trasformare idee in capolavori visivi. "Non c'è sfida creativa che non possa affrontare," dice con un sorriso sicuro. "Ogni mio progetto è un passo avanti nel futuro del design, e il mondo lo sa." Con un ego grande quanto il suo talento, Mario Rossi non si accontenta di essere bravo: vuole essere ricordato come il designer che ha cambiato il gioco, per sempre.</p>
+        </div>
+    </div>
+
+    <meta name="description" content="Portfolio professionale di Luigi Mottola - Art Director & Graphic Designer">
+    <meta property="og:image" content="link-to-your-main-image.jpg">
+    
+    <script>
+
+        let currentProjectId = null;
+
+        // Funzionalità About
+        function toggleAbout() {
+            const aboutModal = document.getElementById('about-modal');
+            if (getComputedStyle(aboutModal).display === 'none') {
+                aboutModal.style.display = 'block';
+            } else {
+                aboutModal.style.display = 'none';
+            }
+        }
+        
+        // Funzionalità Modal
+        const projectData = {
+            'Dettagli': /* ereditato da ('-----'): <tr class="project-row" onclick="openModal('-----')"> */ {
+                title: 'I dettagli amano nascondersi.',
+                content: `
+                    <p><br />
+                    
+                    <p>Sommersi dalla frenesia e dalla tecnologia, riusciamo ancora ad apprezzarne i dettagli nascosti che rivelano bellezze altrimenti invisibili?</p>
+                    <p>L'idea si concentra su ciò che non vediamo e mira a “ridarci la vista”.</p>
+                    <p>La campagna pubblicitaria utilizza tre manifesti per stimolare l'osservazione dei passanti, invitandoli a consultare un insolito catalogo per formare e dare accesso a un'esperienza immersiva.<br />
+                    <p><br />
+                    <p>Submerged by the frenzy and technology, are we still able to appreciate the hidden details that reveal otherwise invisible beauty?</p>
+                    <p>The idea focuses on what we do not see and aims to "give us back our sight".</p>
+                    <p>The advertising campagin uses three posters to stimulate the observation of passers-by, inviting them to consult an unusual catalog to train and dare to access an immersive experience.</p>
+                    <img src="aff_1RGB.jpg" style="width: 100%; margin: 1rem 0;">
+                    <img src="aff_2RGB.jpg" style="width: 100%; margin: 1rem 0;">
+                    <img src="aff_3RGB.jpg" style="width: 100%; margin: 1rem 0;">
+                    <img src="Bill_alberiRGB.jpg" style="width: 100%; margin: 1rem 0;">
+                    <img src="Bill_fermataRGB.jpg" style="width: 100%; margin: 1rem 0;">
+                    <img src="Metro billRGB 2.jpg" style="width: 100%; margin: 1rem 0;">
+                    <img src="bus-station-with-illuminated-blank-banner-street.jpg" style="width: 100%; margin: 1rem 0;">
+                    <img src="bill_muroRGB.jpg" style="width: 100%; margin: 1rem 0;">
+                    <img src="bandella.jpg" style="width: 100%; margin: 1rem 0;">
+                    <img src="Hand Held Magazine Mockup.jpg" style="width: 100%; margin: 1rem 0;">
+                    <img src="Brochure_Mockup_1.jpg" style="width: 100%; margin: 1rem 0;">
+                    <img src="Observo catalogo A4.pdf - Page 1 of 34.gif" style="width: 100%; margin: 1rem 0;">
+                `
+            },
+            
+            'Doritos': /* ereditato da ('-----'): <tr class="project-row" onclick="openModal('-----')"> */ {
+                title: 'DoritosXCholula - Don’t waste a moment.',
+                content: `
+                    <p><br />
+                    
+                    <p>Quanto è irritante perdere momenti di una partita o di un programma televisivo? Doritos Cholula è la patatina perfetta da portare al Super Bowl Party.</p>
+                    <p>Il concept della campagna mira a evidenziare quanto sia irritante perdere i momenti salienti di una partita, di uno show televisivo o di un film. Doritos Cholula risolve questo problema integrando direttamente la salsa messicana all'interno della patatina, eliminando la necessità di intingerla e distogliere lo sguardo dal televisore.</p>
+                    <p><br />
+                    <p>How irritating it is to miss moments of a game or a TV show?  Doritos Cholula is the perfect chip to bring to the Super Bowl Party.</p>
+                    <p>The campaign concept aims to highlight how irritating it is to miss moments of a game, a TV show or a movie. Doritos Cholula solves this problem by directly integrating Mexican sauce inside the chip, eliminating the need for dipping.</p>
+                <img src="DR_1.jpg" style="width: 100%; margin: 1rem 0;">
+                <img src="DR_2.jpg" style="width: 100%; margin: 1rem 0;">
+                <img src="DR_3.jpg" style="width: 100%; margin: 1rem 0;">
+                <img src="DR_4.jpg" style="width: 100%; margin: 1rem 0;">
+                <img src="DR_5.jpg" style="width: 100%; margin: 1rem 0;">
+                <img src="DR_6.jpg" style="width: 100%; margin: 1rem 0;">
+                <img src="DR_7.jpg" style="width: 100%; margin: 1rem 0;">
+                <img src="DR_8.jpg" style="width: 100%; margin: 1rem 0;">
+                
+                <img src="DR_OOH.gif" style="width: 100%; margin: 1rem 0;">
+                <img src="DC_Moc1.gif" style="width: 100%; margin: 1rem 0;">
+                <img src="DC_MOC2.gif" style="width: 100%; margin: 1rem 0;">
+                <img src="DC_Moc3.gif" style="width: 100%; margin: 1rem 0;">
+
+                `
+            },
+            
+            'ADWEEK': /* ereditato da ('-----'): <tr class="project-row" onclick="openModal('-----')"> */ {
+                title: 'ADWEEK - This is not AI.',
+                content: `
+                    <p><br />
+            
+                    <p>Un piccolo cambiamento non può cambiare una grande idea.
+                    <p>L’Intelligenza Artificiale sta diventando parte integrante delle nostre vite ma, soprattutto in ambito creativo, molti la temono.</p>
+                    
+            
+                    
+                    <p>Il brief prevede la realizzazione di una campagna “pro” AI, per mostrare e promuovere le potenzialità di questa nuova tecnologia.</p>
+                    <p>Varie affissioni video ribadiscono il concetto. Il QR code collegherà a un sito web. Sfruttando il layout di famosi generatori AI, il sito avrà il compito di informare le persone sulle potenzialità della stessa. 
+                    <p>Saranno gli utenti stessi a scegliere quanto e come informarsi attraverso i suggerimenti offerti dal sito.</p>
+                    
+                    <p><br />
+                    
+                    <p>A small change, can’t change a big idea.</p>
+                    <p>Artificial Intelligence is becoming an integral part of our lives but, especially in the creative field, many fear it.</p>
+                    
+                
+                    
+                    <p>The brief involves the creation of a "pro" AI campaign, to show and promote the potential</p>
+                    <p>of this new technology.</p>
+                    <p>Various video postings reiterate the concept. The QR code will link to a website. By taking advantage of the layout of famous AI generators, the site will have the task of informing people about its potential.</p>
+                    <p>Users themselves will choose how much and how to inform themselves through the suggestions offered</p>
+                    <p>by the site.</p>
+                    
+                <img src="AD_1.jpg" style="width: 100%; margin: 1rem 0;">
+                 <img src="AD_2.jpg" style="width: 100%; margin: 1rem 0;">
+                 <img src="AD_3.jpg" style="width: 100%; margin: 1rem 0;">
+                 <img src="AW_.jpg" style="width: 100%; margin: 1rem 0;">
+                 <img src="AW_Banner_orizz.jpg" style="width: 100%; margin: 1rem 0;">
+                 <img src="AW_banner mockup.png" style="width: 100%; margin: 1rem 0;">
+                 <img src="AD_app.gif" style="width: 100%; margin: 1rem 0;">
+
+                `
+        
+            },
+            
+            'MELIES': /* ereditato da ('-----'): <tr class="project-row" onclick="openModal('-----')"> */ {
+                title: 'Animated aphorism x Georges Méliès.',
+                content: `
+                    <p><br />
+                    
+                    <p>Le citazioni di Méliès che scorrono sullo sfondo, rafforzano il concetto espresso nel film del regista. Il ritmo è accentuato dalla musica ossimorica, poiché la colonna sonora, con sintetizzatori e strumenti elettronici, allude a un mondo digitale che è in opposizione alle immagini e alla frase del film. </p>
+                    
+                    <p><br />
+                    <p>Quotes from Méliès running in the background reinforce the concept expressed in the director's film. The rhythm is accentuated by the oxymoronic music, as the soundtrack, with synths and electronic instruments, hints at a digital world that is in opposition to the film's images and phrase.</p>
+
+                    <img src="ML_1.png" style="width: 100%; margin: 1rem 0;">
+                    <img src="ML_2.png" style="width: 100%; margin: 1rem 0;">
+                    <img src="ML_3.png" style="width: 100%; margin: 1rem 0;">
+                    <img src="IMG_20180712_155215.jpg" style="width: 100%; margin: 1rem 0;">
+                    <img src="nino-yang-DOIgz9_qmFI-unsplash.jpg" style="width: 100%; margin: 1rem 0;">
+                `
+            },
+
+            'AIDO': /* ereditato da ('-----'): <tr class="project-row" onclick="openModal('-----')"> */ {
+                title: 'AIDO - Un dono consapevole.',
+                content: `
+                    <p><br />
+                    
+                    <p>La morte sarà sempre una, ma si possono vivere molte vite. AIDO intende promuovere una campagna di maggiore consapevolezza sugli aspetti scientifici, etici e sociali legati alle donazioni.</p>
+                    
+                    <p><br />
+                    <p>Death will always be one, but many lives can be lived.AIDO intends to promote a campaign for greater awareness of the scientific, ethical, and social aspects concerning donations.</p>
+
+                    <img src="AID_1.jpg" style="width: 100%; margin: 1rem 0;">
+                    <img src="AID_2.jpg" style="width: 100%; margin: 1rem 0;">
+                    <img src="AID_3.jpg" style="width: 100%; margin: 1rem 0;">
+                    <img src="AID_4.jpg" style="width: 100%; margin: 1rem 0;">
+                    <img src="AID_5.jpg" style="width: 100%; margin: 1rem 0;">
+                    <img src="AID_6.jpg" style="width: 100%; margin: 1rem 0;">
+                    <img src="IG_1.PNG" style="width: 100%; margin: 1rem 0;">
+                    <img src="IG_2.PNG" style="width: 100%; margin: 1rem 0;">
+                    <img src="IG_3.PNG" style="width: 100%; margin: 1rem 0;">
+                    <img src="IG_4.PNG" style="width: 100%; margin: 1rem 0;">
+                    <img src="IG_5.PNG" style="width: 100%; margin: 1rem 0;">
+                    <img src="IG_6.PNG" style="width: 100%; margin: 1rem 0;">
+                    <img src="ST_1.jpg" style="width: 100%; margin: 1rem 0;">
+                    <img src="ST_2.jpg" style="width: 100%; margin: 1rem 0;">
+                    <img src="ST_3.jpg" style="width: 100%; margin: 1rem 0;">
+                    <img src="ST_4.jpg" style="width: 100%; margin: 1rem 0;">
+                    <img src="AID_MOC1.gif" style="width: 100%; margin: 1rem 0;">
+                    <img src="AID_MOC2.jpg" style="width: 100%; margin: 1rem 0;">
+                    <img src="AID_MOC3.jpg" style="width: 100%; margin: 1rem 0;">
+                `
+            },
+            
+            'ZOOM': /* ereditato da ('-----'): <tr class="project-row" onclick="openModal('-----')"> */ {
+                title: 'ZOOM+/-',
+                content: `
+                    <p><br />
+                    
+                    <p>Il focus del progetto era comunicare la dualità tra il mondo macro, lo spazio e il micro, il mondo terrestre. Una associazione visiva psichedelica e confusionaria che spiega con precisione quanto siano mondi</p>
+                     <p>simili e comunicanti.</p>
+                    
+                    <p><br />
+                    <p>The focus of the project was to communicate the duality between the macro world, space, and the micro, the terrestrial world. A psychedelic and confusing visual association that precisely explains how similar and communicating worlds they are.</p>
+
+                    <img src="nino-yang-DOIgz9_qmFI-unsplash.jpg" style="width: 100%; margin: 1rem 0;"> <img src="IMG_20180712_155215.jpg" style="width: 100%; margin: 1rem 0;">
+                    <img src="nino-yang-DOIgz9_qmFI-unsplash.jpg" style="width: 100%; margin: 1rem 0;">
+                `
+            },
+            
+            'Xperiments': /* ereditato da ('-----'): <tr class="project-row" onclick="openModal('-----')"> */ {
+                title: 'Graphic experiments.',
+                content: `
+                    <p><br />
+
+                    <p>Vari esperimenti grafici </p>
+
+                     <p>Outpump's WALLCOME X Porta Venezia Design District 2024.</p>
+
+                    <img src="OT.jpg" style="width: 100%; margin: 1rem 0;">
+                    <img src="OT_moc1.jpg" style="width: 100%; margin: 1rem 0;">
+                    <img src="OT_moc2.jpg" style="width: 100%; margin: 1rem 0;">
+                    <img src="OT_moc3.jpg" style="width: 100%; margin: 1rem 0;">
+                    <img src="OT_moc4.jpg" style="width: 100%; margin: 1rem 0;">
+                    <img src="OT_moc5.jpg" style="width: 100%; margin: 1rem 0;">
+
+                          <p>Top 100 in Fight for Kindness 2024 contest.</p>
+                    <img src="FK_.jpg" style="width: 100%; margin: 1rem 0;">
+                    <img src="FK_moc1.png" style="width: 100%; margin: 1rem 0;">
+                    <img src="FK_moc2.png" style="width: 100%; margin: 1rem 0;">
+
+                    <p>Short film poster for Noelle. In nessun posto.</p>
+                    <img src="NOELLE.jpg" style="width: 100%; margin: 1rem 0;">
+
+                    <p>Poster for SPRINT 2022.</p>
+                    <img src="SPRINT.jpg" style="width: 100%; margin: 1rem 0;">
+                    
+                    <p>Interactive book covers. </p>
+                    <img src="IMG_20180712_155215.jpg" style="width: 100%; margin: 1rem 0;">
+                    <img src="IMG_20180712_155215.jpg" style="width: 100%; margin: 1rem 0;">
+                `
+            }
+        };
+
+        function openModal(projectId) {
+            const modal = document.getElementById('project-modal');
+            const content = document.getElementById('modal-content');
+            const modalTitle = document.getElementById('modal-title');
+
+            // Se la modal è già aperta e si clicca lo stesso progetto, chiudila
+            if (modal.style.display === 'block' && currentProjectId === projectId) {
+                closeModal();
+                currentProjectId = null;
+                return;
+            }
+
+            currentProjectId = projectId;
+            
+            modalTitle.textContent = projectData[projectId].title;
+            content.innerHTML = projectData[projectId].content;
+            
+            modal.style.display = 'block';
+
+            // Attendi che il layout sia aggiornato e poi resetta lo scroll
+            setTimeout(() => {
+                content.scrollTop = 0;      // Reset dello scroll dopo 0ms (cioè subito dopo il rendering)
+            }, 50);
+        }
+
+        function closeModal() {
+            document.getElementById('project-modal').style.display = 'none';
+            currentProjectId = null;
+        }
+
+        /* # */
+        document.querySelectorAll('.project-row').forEach(row => {
+            row.addEventListener('mouseenter', function() {
+                const hoverImg = this.querySelector('.hover-image');
+                if (!hoverImg) return;
+                
+                // Ottieni le dimensioni e la posizione della riga
+                const rowRect = this.getBoundingClientRect();
+                const imgHeight = hoverImg.offsetHeight;
+                const imgWidth = hoverImg.offsetWidth;
+                
+                // Calcola la posizione verticale ideale (centro della riga)
+                let idealTop = rowRect.top + rowRect.height / 2 - imgHeight / 2;
+                let idealLeft = rowRect.right; // Partiamo posizionando l'immagine a destra della riga
+                const minTop = 20;
+                const maxTop = window.innerHeight - imgHeight - 20;
+                const adjustedTop = Math.max(minTop, Math.min(idealTop, maxTop));
+                
+                // Imposta dei margini di sicurezza (ad es. 20px dal bordo)
+                const margin = 20;
+
+                // Regola la posizione verticale per far sì che l'immagine non esca in alto o in basso
+                if (idealTop < margin) {
+                    idealTop = margin;
+                } else if (idealTop + imgHeight > window.innerHeight - margin) {
+                    idealTop = window.innerHeight - imgHeight - margin;
+                }
+                
+                // Se l'immagine uscisse fuori dal viewport, la riposiziona
+                if (idealLeft + imgWidth > window.innerWidth - margin) {
+                    idealLeft = window.innerWidth - imgWidth - margin;
+                }
+                
+                // Applica le nuove impostazioni in modalità fixed
+                hoverImg.style.position = 'fixed';
+                hoverImg.style.top = (adjustedTop + 20) + 'px';
+                hoverImg.style.left = (idealLeft - 500) - 'px';
+                hoverImg.style.display = 'block';
+            });
+            
+            row.addEventListener('mouseleave', function() {
+                const hoverImg = this.querySelector('.hover-image');
+                if (!hoverImg) return;
+                hoverImg.style.display = 'none';
+            });
+        });
+
+        // Chiudi modal cliccando fuori
+        window.onclick = function(event) {
+            const modal = document.getElementById('project-modal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+    </script>
+</body>
+</html>
